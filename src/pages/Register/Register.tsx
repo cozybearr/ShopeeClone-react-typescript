@@ -1,22 +1,27 @@
 import { RegisterOptions, useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { getRules } from 'src/utils/rules'
-
-interface FormData {
-  email: string
-  password: string
-  confirm_password: string
-}
+import Input from 'src/components/Input'
+import { schema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import type { Schema } from 'src/utils/rules'
+// interface FormData {
+//   email: string
+//   password: string
+//   confirm_password: string
+// }
+type FormData = Schema
 
 export default function Register() {
   const {
     register,
     handleSubmit,
-    watch,
     getValues,
     formState: { errors }
-  } = useForm<FormData>()
-  const rules = getRules(getValues)
+  } = useForm<FormData>({
+    resolver: yupResolver(schema)
+  })
+  // const rules = getRules(getValues)
+
   const onSubmit = handleSubmit(
     (data) => {},
     (data) => {
@@ -31,37 +36,33 @@ export default function Register() {
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng ký</div>
-              <div className='mt-2'>
-                <input
-                  type='email'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-700 focus:shadow-sm'
-                  placeholder='Email'
-                  {...register('email', rules.email as RegisterOptions<FormData, 'email'>)}
-                />
-                <div className='mt-1 text-red-600 min-h-5 text-sm text-left'>{errors.email?.message}</div>
-              </div>
-              <div className='mt-2'>
-                <input
-                  type='password'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-700 focus:shadow-sm'
-                  placeholder='Password'
-                  autoComplete='on'
-                  {...register('password', rules.password as RegisterOptions<FormData, 'password'>)}
-                />
-                <div className='mt-1 text-red-600 min-h-5 text-sm text-left'>{errors.password?.message}</div>
-              </div>
-              <div className='mt-2'>
-                <input
-                  type='password'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-700 focus:shadow-sm'
-                  placeholder='Confirm Password'
-                  autoComplete='on'
-                  {...register('confirm_password', {
-                    ...(rules.confirm_password as RegisterOptions<FormData, 'confirm_password'>)
-                  })}
-                />
-                <div className='mt-1 text-red-600 min-h-5 text-sm text-left'>{errors.confirm_password?.message}</div>
-              </div>
+              <Input
+                className='mt-8'
+                type='email'
+                placeholder='Email'
+                register={register}
+                errorMessage={errors.email?.message}
+                name={'email'}
+                autoComplete='on'
+              />
+              <Input
+                className='mt-2'
+                type='password'
+                placeholder='Password'
+                register={register}
+                errorMessage={errors.password?.message}
+                name={'password'}
+                autoComplete='on'
+              />
+              <Input
+                className='mt-2'
+                type='password'
+                placeholder='Confirm Password'
+                register={register}
+                errorMessage={errors.confirm_password?.message}
+                name={'confirm_password'}
+                autoComplete='on'
+              />
               <div className='mt-2'>
                 <button className='w-full py-4 px-2 text-center uppercase bg-red-500 text-white text-sm hover:bg-red-600'>
                   Đăng Ký

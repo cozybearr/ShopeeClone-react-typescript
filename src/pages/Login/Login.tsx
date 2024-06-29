@@ -5,6 +5,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors }
   } = useForm()
 
@@ -19,16 +20,6 @@ export default function Login() {
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit}>
               <div className='text-2xl'>Đăng nhập</div>
-              <div className='mt-2'>
-                <input
-                  type='email'
-                  name='email'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-700 focus:shadow-sm'
-                  autoComplete='on'
-                  placeholder='Email'
-                />
-                <div className='mt-1 text-red-600 min-h-5 text-sm text-left'></div>
-              </div>
               <div className='mt-2'>
                 <input
                   type='password'
