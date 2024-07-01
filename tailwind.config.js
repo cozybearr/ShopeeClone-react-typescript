@@ -16,7 +16,7 @@ module.exports = {
     plugin(function ({ addComponents, theme }) {
       addComponents({
         '.container': {
-          maxWidth: theme('column.7xl'),
+          maxWidth: theme('columns.7xl'),
           marginLeft: 'auto',
           marginRight: 'auto',
           paddingLeft: theme('spacing.4'),
