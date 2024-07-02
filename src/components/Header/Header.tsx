@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 import Popover from '../Popover'
 import { useMutation } from '@tanstack/react-query'
-import { logout } from 'src/apis/auth.api'
+import authApi from 'src/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import path from 'src/constants/path'
 export default function Header() {
   const { isAuthenticated, profile, setIsAuthenticated, setProfile } = useContext(AppContext)
   const logoutMutation = useMutation({
-    mutationFn: () => logout(),
+    mutationFn: () => authApi.logout(),
     onSuccess: () => {
       setIsAuthenticated(false)
       setProfile(null)
@@ -109,31 +109,33 @@ export default function Header() {
               </g>
             </svg>
           </Link>
-          <form className='bg-white rounded-sm p-1 flex col-span-9'>
-            <input
-              type='text'
-              name='search'
-              className='text-black px-3 py-2 flex-grow border-none outline-none bg-transparent'
-              placeholder='Freeship Đơn Từ 0đ'
-            />
-            <button className='rounded-sm py-2 px-6 flex-shrink-0 bg-orange hover:opacity-90 '>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-6'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z'
-                />
-              </svg>
-            </button>
+          <form className=' col-span-9'>
+            <div className='bg-white rounded-sm p-1 flex'>
+              <input
+                type='text'
+                name='search'
+                className='text-black px-3 py-2 flex-grow border-none outline-none bg-transparent uppercase'
+                placeholder='FREESHIP ĐƠN TỪ 0Đ'
+              />
+              <button className='rounded-sm py-2 px-6 flex-shrink-0 bg-orange hover:opacity-90 '>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='size-6'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z'
+                  />
+                </svg>
+              </button>
+            </div>
           </form>
-          <div className='col-span-1 justify-self-end'>
+          <div className='col-span-1 justify-self-center'>
             <Popover
               renderPopover={
                 <div className='bg-white relative shadow-md rounded-sm border border-gray-200 max-w-[400px] text-sm'>
