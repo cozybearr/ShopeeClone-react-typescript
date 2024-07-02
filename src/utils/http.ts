@@ -19,7 +19,6 @@ class Http {
     })
     this.instance.interceptors.request.use(
       (config) => {
-        console.log(config)
         if (this.accessToken && config.headers) {
           config.headers.Authorization = this.accessToken
         }
