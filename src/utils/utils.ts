@@ -21,3 +21,7 @@ export function formatNumberToSocialStyle(value: number) {
     .replace('.', ',')
     .toLowerCase()
 }
+
+export function calculateDiscount(price: number, priceBeforeDiscount: number) {
+  return Math.floor(100 * (1 - price / priceBeforeDiscount))
+}
