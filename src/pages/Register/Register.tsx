@@ -17,7 +17,9 @@ import Button from 'src/components/Button'
 //   password: string
 //   confirm_password: string
 // }
-type FormData = Schema
+type FormData = Pick<Schema, 'email' | 'password' | 'confirm_password'>
+
+const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
 
 export default function Register() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext)
@@ -28,7 +30,7 @@ export default function Register() {
     setError,
     formState: { errors }
   } = useForm<FormData>({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(registerSchema)
   })
   // const rules = getRules(getValues)
   const registerAccountMutation = useMutation({
@@ -63,7 +65,7 @@ export default function Register() {
       <div className='container'>
         <div className='grid grid-cols-1 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
+            <form className='rounded bg-white p-10 shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng ký</div>
               <Input
                 className='mt-8'
@@ -94,7 +96,7 @@ export default function Register() {
               />
               <div className='mt-2'>
                 <Button
-                  className='w-full py-4 px-2 flex justify-center items-center uppercase bg-red-500 text-white text-sm hover:bg-red-600'
+                  className='flex w-full items-center justify-center bg-red-500 px-2 py-4 text-sm uppercase text-white hover:bg-red-600'
                   isLoading={registerAccountMutation.isPending}
                   disabled={registerAccountMutation.isPending}
                 >
@@ -103,7 +105,7 @@ export default function Register() {
               </div>
               <div className='mt-8 text-center'>
                 <span className='text-slate-400'>Bạn đã có tài khoản?</span>
-                <Link to={'/login'} className='ml-2 text-red-400 '>
+                <Link to={'/login'} className='ml-2 text-red-400'>
                   Đăng nhập
                 </Link>
               </div>
