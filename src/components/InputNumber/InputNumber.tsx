@@ -1,15 +1,14 @@
-import { onChange } from 'node_modules/react-toastify/dist/core/store'
 import { forwardRef, InputHTMLAttributes } from 'react'
 import type { UseFormRegister } from 'react-hook-form'
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string
   classNameInput?: string
   classNameError?: string
   register?: UseFormRegister<any>
 }
 
-const InputNumber = forwardRef<HTMLInputElement, Props>(function (
+const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function (
   {
     errorMessage,
     className,
