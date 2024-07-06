@@ -2,7 +2,6 @@ import axios, { AxiosInstance, HttpStatusCode } from 'axios'
 import { toast } from 'react-toastify'
 import { AuthResponse } from 'src/types/auth.type'
 import { clearAccessTokenToLs, getAccessTokenFromLs, setAccessTokenToLs, setProfileToLs } from './auth'
-import { error } from 'console'
 import path from 'src/constants/path'
 
 class Http {

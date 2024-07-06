@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import InputNumber, { InputNumberProps } from '../InputNumber'
 
 interface Props extends InputNumberProps {
@@ -6,6 +7,7 @@ interface Props extends InputNumberProps {
   onDecrease?: (value: number) => void
   onType?: (value: number) => void
   classNameWrapper?: string
+  onFocusOut?: (value: number) => void
 }
 
 export default function QuantityController({
@@ -15,36 +17,46 @@ export default function QuantityController({
   onType,
   classNameWrapper = 'ml-10',
   value,
+  onFocusOut,
   ...rest
 }: Props) {
+  const [localValue, setLocalValue] = useState<number>(Number(value || 1))
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let _value = Number(event.target.value)
-    if (max !== undefined && _value > max) {
-      _value = max
-    } else if (_value < 1) {
-      _value = 1
+    let value = Number(event.target.value)
+    if (max && value > max) {
+      value = max
+    } else if (value < 1) {
+      value = 1
     }
-    onType && onType(_value)
+    onType && onType(value)
+    setLocalValue(value)
   }
 
   const increase = () => {
-    let _value = Number(value) + 1
-    if (max !== undefined && _value > max) {
+    let _value = Number(value || localValue) + 1
+    if (max && _value > max) {
       _value = max
     }
     onIncrease && onIncrease(_value)
+    setLocalValue(_value)
   }
 
   const decrease = () => {
-    let _value = Number(value) - 1
+    let _value = Number(value || localValue) - 1
     if (_value < 1) {
       _value = 1
     }
     onDecrease && onDecrease(_value)
+    setLocalValue(_value)
+  }
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+    onFocusOut && onFocusOut(Number(event.target.value))
   }
 
   return (
-    <div className='ml-10 flex items-center'>
+    <div className={'flex items-center ' + classNameWrapper}>
       <button
         className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'
         onClick={decrease}
@@ -61,12 +73,14 @@ export default function QuantityController({
         </svg>
       </button>
       <InputNumber
-        value={value}
         className=''
+        classNameInput='h-8 w-14 text-center rounded-none border border-gray-300 text-gray-600 outline-none'
         classNameError='hidden'
-        classNameInput='h-8 w-14 border-t border-b border-gray-300 p-1 text-center outline-none'
+        value={value || localValue}
         onChange={handleChange}
-      ></InputNumber>
+        onBlur={handleBlur}
+        {...rest}
+      />
       <button
         className='flex h-8 w-8 items-center justify-center rounded-r-sm border border-gray-300 text-gray-600'
         onClick={increase}

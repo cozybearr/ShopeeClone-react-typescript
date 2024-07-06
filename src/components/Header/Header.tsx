@@ -1,6 +1,6 @@
 import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import authApi from 'src/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
@@ -20,6 +20,7 @@ const nameSchema = schema.pick(['name'])
 const MAX_PURCHASE = 5
 export default function Header() {
   const queryConfig = useQueryConfig()
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { isAuthenticated, profile, setIsAuthenticated, setProfile } = useContext(AppContext)
   const logoutMutation = useMutation({
@@ -27,12 +28,14 @@ export default function Header() {
     onSuccess: () => {
       setIsAuthenticated(false)
       setProfile(null)
+      queryClient.removeQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
     }
   })
 
   const { data: purchasesInCartData } = useQuery({
     queryKey: ['purchases', { status: purchasesStatus.inCart }],
-    queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart })
+    queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart }),
+    enabled: isAuthenticated
   })
 
   const purchasesInCart = purchasesInCartData?.data.data
@@ -186,7 +189,7 @@ export default function Header() {
             <Popover
               renderPopover={
                 <div className='relative max-w-[400px] rounded-sm border border-gray-200 bg-white text-sm shadow-md'>
-                  {purchasesInCart ? (
+                  {purchasesInCart?.length ? (
                     <div className='p-2'>
                       <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
                       <div className='mt-5'>
@@ -213,15 +216,19 @@ export default function Header() {
                             {purchasesInCart.length > MAX_PURCHASE ? purchasesInCart.length - MAX_PURCHASE : ' '}Thêm
                             hàng vào giỏ
                           </div>
-                          <button className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-90'>
+                          <Link
+                            className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-90'
+                            to={path.cart}
+                          >
                             Xem giỏ hàng
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className='flex h-[300px] w-[400px] items-center justify-center p-2'>
+                    <div className='flex h-[300px] w-[400px] flex-col items-center justify-center p-2'>
                       <img src={noproduct} alt='no-purchase' className='h-24 w-24' />
+                      <p className='mt-3 text-center'>Chưa có sản phẩm</p>
                     </div>
                   )}
                 </div>
@@ -242,9 +249,11 @@ export default function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
                   />
                 </svg>
-                <span className='absolute left-[17px] top-[-5px] rounded-full bg-white px-[9px] py-[1px] text-xs text-orange'>
-                  {purchasesInCart?.length}
-                </span>
+                {purchasesInCart && purchasesInCart.length > 0 && (
+                  <span className='absolute left-[17px] top-[-5px] rounded-full bg-white px-[9px] py-[1px] text-xs text-orange'>
+                    {purchasesInCart?.length}
+                  </span>
+                )}
               </Link>
             </Popover>
           </div>

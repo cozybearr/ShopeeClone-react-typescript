@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { NoUndefinedField } from 'src/types/utils.type'
 import RatingStars from 'src/pages/ProductList/components/RatingStars'
 import { omit } from 'lodash'
+import InputV2 from 'src/components/InputV2'
 
 interface Props {
   queryConfig: QueryConfig
@@ -141,7 +142,17 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                 )
               }}
             />
-
+            {/* <InputV2
+              name={'price_max'}
+              type='text'
+              className='grow'
+              placeholder='₫TỪ'
+              onChange={() => {
+                trigger('price_max')
+              }}
+              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-700 focus:shadow-sm'
+              classNameError='hidden'
+            /> */}
             <div className='mx-2 mt-1 shrink-0'>-</div>
             <Controller
               control={control}
