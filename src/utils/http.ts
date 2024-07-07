@@ -48,7 +48,7 @@ class Http {
           const message = data.message || error.message
           toast.error(message)
         }
-        if (error.respone?.status === HttpStatusCode.Unauthorized){
+        if (error.respone?.status === HttpStatusCode.Unauthorized) {
           clearAccessTokenFromLs()
         }
         return Promise.reject(error)
