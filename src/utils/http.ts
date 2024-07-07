@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, HttpStatusCode } from 'axios'
 import { toast } from 'react-toastify'
 import { AuthResponse } from 'src/types/auth.type'
-import { clearAccessTokenToLs, getAccessTokenFromLs, setAccessTokenToLs, setProfileToLs } from './auth'
+import { clearAccessTokenFromLs, getAccessTokenFromLs, setAccessTokenToLs, setProfileToLs } from './auth'
 import path from 'src/constants/path'
 
 class Http {
@@ -38,7 +38,7 @@ class Http {
           setProfileToLs(data.data.user)
         } else if (url === path.logout) {
           this.accessToken = ''
-          clearAccessTokenToLs()
+          clearAccessTokenFromLs()
         }
         return response
       },
@@ -47,6 +47,9 @@ class Http {
           const data: any | undefined = error.response?.data
           const message = data.message || error.message
           toast.error(message)
+        }
+        if (error.respone?.status === HttpStatusCode.Unauthorized){
+          clearAccessTokenFromLs()
         }
         return Promise.reject(error)
       }

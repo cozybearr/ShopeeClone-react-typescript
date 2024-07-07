@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import ProductRating from 'src/components/ProductRating'
 import { calculateDiscount, formatCurrency, formatNumberToSocialStyle, getIdFromNameId } from 'src/utils/utils'
@@ -11,11 +11,13 @@ import QuantityController from 'src/components/QuantityController'
 import purchaseApi from 'src/apis/purchase.api'
 import { purchasesStatus } from 'src/constants/purchase'
 import { toast } from 'react-toastify'
+import path from 'src/constants/path'
 
 export default function ProductDetail() {
   const [buyCount, setBuyCount] = useState(1)
   const queryClient = useQueryClient()
   const { nameId } = useParams()
+  const navigate = useNavigate()
   const id = getIdFromNameId(nameId as string)
   const { data: productDetailData } = useQuery({
     queryKey: ['products', id],
@@ -103,6 +105,16 @@ export default function ProductDetail() {
         }
       }
     )
+  }
+
+  const handleBuyNow = async () => {
+    const res = await addToCartMutation.mutateAsync({ buy_count: buyCount, product_id: product?._id as string })
+    const purchase = res.data.data
+    navigate(path.cart, {
+      state: {
+        purchaseId: purchase._id
+      }
+    })
   }
 
   if (!product) return null
@@ -219,7 +231,10 @@ export default function ProductDetail() {
                   ></img>
                   Thêm vào giỏ hàng
                 </button>
-                <button className='ml-4 flex h-12 items-center justify-center bg-orange px-4 capitalize text-white hover:bg-orange/80'>
+                <button
+                  className='ml-4 flex h-12 items-center justify-center bg-orange px-4 capitalize text-white hover:bg-orange/80'
+                  onClick={handleBuyNow}
+                >
                   Mua ngay
                 </button>
               </div>

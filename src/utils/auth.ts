@@ -4,7 +4,7 @@ export const setAccessTokenToLs = (access_token: string) => {
   localStorage.setItem('access_token', access_token)
 }
 
-export const clearAccessTokenToLs = () => {
+export const clearAccessTokenFromLs = () => {
   localStorage.removeItem('access_token')
   localStorage.removeItem('profile')
 }
