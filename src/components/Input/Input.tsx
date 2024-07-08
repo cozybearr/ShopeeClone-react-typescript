@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, useRef, useState } from 'react'
+import { InputHTMLAttributes, useState } from 'react'
 import type { UseFormRegister } from 'react-hook-form'
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
@@ -28,10 +28,10 @@ export default function Input({
   }
 
   return (
-    <div className={className + ' relative'}>
+    <div className={`${className} relative`}>
       <input
         type={(type === 'password' && !visibleEye ? 'password' : 'text') || type}
-        className={`${classNameInput}`} // Add padding to the right to avoid text overlap
+        className={`${classNameInput} pr-10`} // Add padding to the right to avoid text overlap
         {...registerResult}
         {...rest}
       />
