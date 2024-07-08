@@ -103,7 +103,6 @@ export default function Profile() {
   })
 
   const avatar = watch('avatar')
-  console.log(avatar, 'avatar')
   return (
     <div className='rounded-sm bg-white px-7 pb-20 shadow'>
       <div className='border-b border-b-gray-200 py-6'>

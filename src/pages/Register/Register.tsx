@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import type { Schema } from 'src/utils/rules'
 import { useMutation } from '@tanstack/react-query'
 import authApi from 'src/apis/auth.api'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
@@ -40,7 +40,6 @@ export default function Register() {
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
       onSuccess: (data) => {
-        console.log(data)
         setIsAuthenticated(true)
         setProfile(data.data.data.user)
         navigate('/')

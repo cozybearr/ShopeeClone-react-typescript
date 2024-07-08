@@ -23,7 +23,6 @@ export default function Input({
   const registerResult = register && name ? register(name) : {}
 
   const handleOnClickEye = () => {
-    console.log(type)
     setVisibleEye((prev) => !prev)
   }
 

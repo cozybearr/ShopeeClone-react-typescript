@@ -34,7 +34,6 @@ export default function Login() {
   const onSubmit = handleSubmit((data) => {
     loginAccountMutation.mutate(data, {
       onSuccess: (data) => {
-        console.log(data)
         setIsAuthenticated(true)
         setProfile(data.data.data.user)
         navigate('/')

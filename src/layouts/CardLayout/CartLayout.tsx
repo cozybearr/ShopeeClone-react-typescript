@@ -1,6 +1,5 @@
 import CartHeader from 'src/components/CartHeader'
 import Footer from 'src/components/Footer'
-import NavHeader from 'src/components/NavHeader'
 
 interface Props {
   children?: React.ReactNode
