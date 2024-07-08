@@ -12,6 +12,7 @@ import purchaseApi from 'src/apis/purchase.api'
 import { purchasesStatus } from 'src/constants/purchase'
 import { toast } from 'react-toastify'
 import path from 'src/constants/path'
+import NotFound from '../PageNotFound'
 
 export default function ProductDetail() {
   const [buyCount, setBuyCount] = useState(1)
@@ -19,7 +20,7 @@ export default function ProductDetail() {
   const { nameId } = useParams()
   const navigate = useNavigate()
   const id = getIdFromNameId(nameId as string)
-  const { data: productDetailData } = useQuery({
+  const { data: productDetailData, isError } = useQuery({
     queryKey: ['products', id],
     queryFn: () => productApi.getProductDetail(id as string)
   })
@@ -116,6 +117,7 @@ export default function ProductDetail() {
       }
     })
   }
+  if (isError) return <NotFound />
 
   if (!product) return null
   return (
