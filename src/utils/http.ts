@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import { AuthResponse } from 'src/types/auth.type'
 import { clearAccessTokenFromLs, getAccessTokenFromLs, setAccessTokenToLs, setProfileToLs } from './auth'
 import path from 'src/constants/path'
+import config from 'src/constants/config'
 
 class Http {
   instance: AxiosInstance
@@ -10,7 +11,7 @@ class Http {
   constructor() {
     this.accessToken = getAccessTokenFromLs()
     this.instance = axios.create({
-      baseURL: 'https://api-ecom.duthanhduoc.com/',
+      baseURL: config.baseURL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json'
@@ -45,7 +46,7 @@ class Http {
       function (error) {
         if (error.response?.status !== HttpStatusCode.UnprocessableEntity) {
           const data: any | undefined = error.response?.data
-          const message = data.message || error.message
+          const message = data?.message || error.message
           toast.error(message)
         }
         if (error.respone?.status === HttpStatusCode.Unauthorized) {

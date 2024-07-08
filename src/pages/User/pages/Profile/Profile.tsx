@@ -1,18 +1,121 @@
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import userApi, { BodyUpdateProfile } from 'src/apis/user.api'
+import Button from 'src/components/Button'
 import Input from 'src/components/Input'
+import InputNumber from 'src/components/InputNumber'
+import { userSchema, UserSchema } from 'src/utils/rules'
+import DateSelect from '../../components/DateSelect'
+import { toast } from 'react-toastify'
+import { AppContext } from 'src/contexts/app.context'
+import { setProfileToLs } from 'src/utils/auth'
+import { getAvatarUrl, isAxiosUnprocessableEntityError } from 'src/utils/utils'
+import { ErrorResponse } from 'src/types/utils.type'
+import InputFile from 'src/components/InputFile'
+
+type FormData = Pick<UserSchema, 'name' | 'address' | 'avatar' | 'phone' | 'date_of_birth'>
+type FormDataError = Omit<FormData, 'date_of_birth'> & {
+  date_of_birth?: string
+}
+
+const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
 
 export default function Profile() {
+  const { setProfile } = useContext(AppContext)
+  const [file, setFile] = useState<File>()
+  const previewImage = useMemo(() => {
+    return file ? URL.createObjectURL(file) : ''
+  }, [file])
+  const {
+    register,
+    control,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+    setError,
+    watch
+  } = useForm<FormData>({
+    defaultValues: {
+      name: '',
+      phone: '',
+      address: '',
+      avatar: '',
+      date_of_birth: new Date(1990, 0, 1)
+    },
+    resolver: yupResolver(profileSchema)
+  })
+  const { data, refetch } = useQuery({
+    queryKey: ['profile'],
+    queryFn: userApi.getProfile
+  })
+  const profile = data?.data.data
+  const updateProfileMutation = useMutation({
+    mutationFn: userApi.updateProfile
+  })
+
+  useEffect(() => {
+    if (profile) {
+      setValue('name', profile.name)
+      setValue('address', profile.address)
+      setValue('phone', profile.phone)
+      setValue('date_of_birth', profile.date_of_birth ? new Date(profile.date_of_birth) : new Date(1990, 0, 1))
+    }
+  }, [profile, setValue])
+
+  const uploadAvatarMutation = useMutation({
+    mutationFn: userApi.uploadAvatar
+  })
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      let avatarName = avatar
+      if (file) {
+        const form = new FormData()
+        form.append('image', file)
+        const uploadRes = await uploadAvatarMutation.mutateAsync(form)
+        avatarName = uploadRes.data.data
+        setValue('avatar', avatarName)
+      }
+      const res = await updateProfileMutation.mutateAsync({
+        ...data,
+        date_of_birth: data.date_of_birth?.toISOString(),
+        avatar: avatarName
+      } as BodyUpdateProfile)
+      setProfile(res.data.data)
+      setProfileToLs(res.data.data)
+      refetch()
+      toast.success(res.data.message)
+    } catch (error) {
+      if (isAxiosUnprocessableEntityError<ErrorResponse<FormDataError>>(error)) {
+        const formError = error.response?.data.data
+        if (formError) {
+          Object.keys(formError).forEach((key) => {
+            setError(key as keyof FormData, {
+              message: formError[key as keyof FormDataError],
+              type: 'Server'
+            })
+          })
+        }
+      }
+    }
+  })
+
+  const avatar = watch('avatar')
+  console.log(avatar, 'avatar')
   return (
     <div className='rounded-sm bg-white px-7 pb-20 shadow'>
       <div className='border-b border-b-gray-200 py-6'>
         <h1 className='text-lg font-medium capitalize text-gray-900'>Hồ sơ của tôi</h1>
         <div className='mt-1 text-sm text-gray-700'>Quản lí thông tin hồ sơ bảo mật tài khoản</div>
       </div>
-      <div className='mt-8 flex flex-col-reverse md:flex-row md:items-start'>
-        <form className='mt-6 flex-grow pr-12 md:mt-0'>
+      <form className='mt-8 flex flex-col-reverse md:flex-row md:items-start' onSubmit={onSubmit}>
+        <div className='mt-6 flex-grow pr-12 md:mt-0'>
           <div className='flex flex-grow'>
             <div className='w-[15%] truncate pt-3 text-right capitalize'>Email</div>
             <div className='w-[75%] pl-5'>
-              <div className='pt-3 text-gray-700'>quanbui@gmail.com</div>
+              <div className='pt-3 text-gray-700'>{profile?.email}</div>
             </div>
           </div>
           <div className='mt-6 flex flex-wrap'>
@@ -21,16 +124,28 @@ export default function Profile() {
               <Input
                 classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
                 placeholder='Tên'
+                register={register}
+                name='name'
+                errorMessage={errors.name?.message}
               />
             </div>
           </div>
           <div className='mt-2 flex flex-wrap'>
             <div className='w-[15%] truncate pt-3 text-right capitalize'>Số điện thoại</div>
             <div className='w-[75%] pl-5'>
-              <Input
-                classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
-                placeholder='Số điện thoại'
-              />
+              <Controller
+                control={control}
+                name='phone'
+                render={({ field }) => (
+                  <InputNumber
+                    classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
+                    placeholder='Số điện thoại'
+                    errorMessage={errors.phone?.message}
+                    {...field}
+                    onChange={field.onChange}
+                  />
+                )}
+              ></Controller>
             </div>
           </div>
           <div className='mt-2 flex flex-wrap'>
@@ -39,45 +154,44 @@ export default function Profile() {
               <Input
                 classNameInput='w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm'
                 placeholder='Địa chỉ'
+                register={register}
+                name='address'
+                errorMessage={errors.address?.message}
               />
             </div>
           </div>
-          <div className='mt-2 flex flex-wrap'>
-            <div className='w-[15%] truncate pt-3 text-right capitalize'>Ngày sinh</div>
+          <Controller
+            control={control}
+            name='date_of_birth'
+            render={({ field }) => (
+              <DateSelect errorMessage={errors.date_of_birth?.message} value={field.value} onChange={field.onChange} />
+            )}
+          />
+          <div className='mt-6 flex flex-wrap'>
+            <div className='w-[15%] truncate pt-3 text-right capitalize'></div>
             <div className='w-[75%] pl-5'>
-              <div className='flex justify-between'>
-                <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
-                  <option disabled>Ngày</option>
-                </select>
-                <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
-                  <option disabled>Tháng</option>
-                </select>
-                <select className='h-10 w-[32%] rounded-sm border border-black/10 px-3'>
-                  <option disabled>Năm</option>
-                </select>
-              </div>
+              <Button
+                className='flex h-9 items-center bg-orange px-5 text-center text-sm text-white hover:bg-orange/80'
+                type='submit'
+              >
+                Lưu
+              </Button>
             </div>
           </div>
-        </form>
+        </div>
         <div className='flex justify-center md:w-72 md:border-l md:border-l-gray-200'>
           <div className='flex flex-col items-center'>
             <div className='my-5 h-24 w-24'>
-              <img
-                src='https://scontent.fsgn6-1.fna.fbcdn.net/v/t39.30808-1/305202851_452055013536279_797964077833086645_n.jpg?stp=cp6_dst-jpg_p160x160&_nc_cat=104&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=EKmquWhl2V0Q7kNvgHB3noc&_nc_ht=scontent.fsgn6-1.fna&oh=00_AYC6Fzx2BI_3ftkWjcIz3nyi3hgOFJfgKbLLhDMSRf1U0w&oe=668FE759'
-                alt=''
-              ></img>
+              <img className='h-full w-full object-cover' src={previewImage || getAvatarUrl(profile?.avatar as string)} alt=''></img>
             </div>
-            <input className='hidden' type='file' accept='.jpg,.jpeg,.png' />
-            <button className='flex h-10 items-center justify-end rounded-sm border bg-white px-6 text-sm text-gray-600 shadow-sm'>
-              Chọn ảnh
-            </button>
+            <InputFile setFile={setFile} />
             <div className='mt-3 text-gray-400'>
               <div>Dung lượng tối đa 1 MB</div>
               <div>Định dạng .JPEG, .PNG</div>
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   )
 }

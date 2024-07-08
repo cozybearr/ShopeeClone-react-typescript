@@ -6,7 +6,8 @@ import path from 'src/constants/path'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { purchasesStatus } from 'src/constants/purchase'
 import authApi from 'src/apis/auth.api'
-
+import userImage from 'src/assets/images/user.svg'
+import { getAvatarUrl } from 'src/utils/utils'
 export default function NavHeader() {
   const queryClient = useQueryClient()
   const { isAuthenticated, profile, setIsAuthenticated, setProfile } = useContext(AppContext)
@@ -80,14 +81,14 @@ export default function NavHeader() {
             </div>
           }
         >
-          <div className='h-5 w-5 flex-shrink-0'>
+          <div className='h-6 w-6 flex-shrink-0'>
             <img
-              src='https://scontent.fsgn6-1.fna.fbcdn.net/v/t39.30808-6/305202851_452055013536279_797964077833086645_n.jpg?stp=cp6_dst-jpg&_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=GEmhfgVJeigQ7kNvgHaphib&_nc_ht=scontent.fsgn6-1.fna&oh=00_AYCHG-geQHe6hp_YKeGOK5rQOtjXmyDhFFh8W_R5XrK_kA&oe=6686DD3B'
+              src={`${getAvatarUrl(profile?.avatar as string)}` || userImage}
               alt='avatar'
               className='h-full w-full rounded-full object-cover'
             />
           </div>
-          <div className='mr-8'>{profile?.email}</div>
+          <div className='ml-2'>{profile?.email}</div>
         </Popover>
       )}
       {!isAuthenticated && (

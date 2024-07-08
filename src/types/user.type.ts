@@ -8,6 +8,7 @@ export interface User {
   date_of_birth?: string // ISO-8610
   address: string
   phone: string
+  avatar?: string
   createdAt: string
   updatedAt: string
 }
