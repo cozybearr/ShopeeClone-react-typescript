@@ -22,7 +22,7 @@ const purchaseTab = [
 
 export default function HistoryPurchase() {
   const queryParams: { status?: string } = useQueryParams()
-  const status: number = Number(queryParams.status)
+  const status: number = Number(queryParams.status) || purchasesStatus.all
   const { isAuthenticated } = useContext(AppContext)
   const { data: purchasesInCartData } = useQuery({
     queryKey: ['purchases', { status: status }],
