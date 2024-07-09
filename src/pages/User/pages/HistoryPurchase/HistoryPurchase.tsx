@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useContext } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { createSearchParams, Link } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import purchaseApi from 'src/apis/purchase.api'
@@ -50,6 +51,10 @@ export default function HistoryPurchase() {
   ))
   return (
     <Fragment>
+      <Helmet>
+        <title>Đơn mua</title>
+        <meta name='description' title='Shopee Clone My Purchase page'></meta>
+      </Helmet>
       <div className='sticky top-0 flex rounded-t-sm shadow-sm'>{purchaseTabLinks}</div>
       <div className='mt-2 flex-col py-4'>
         {purchasesInCart?.map((purchase) => (

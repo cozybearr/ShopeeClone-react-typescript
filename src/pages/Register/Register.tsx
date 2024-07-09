@@ -12,6 +12,7 @@ import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import { ErrorResponse } from 'src/types/utils.type'
 import Button from 'src/components/Button'
+import { Helmet } from 'react-helmet-async'
 // interface FormData {
 //   email: string
 //   password: string
@@ -61,6 +62,10 @@ export default function Register() {
   })
   return (
     <div className='bg-orange'>
+      <Helmet>
+        <title>Đăng ký</title>
+        <meta name='description' title='Shopee Clone Register page'></meta>
+      </Helmet>
       <div className='container'>
         <div className='grid grid-cols-1 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>

@@ -14,6 +14,8 @@ import { toast } from 'react-toastify'
 import path from 'src/constants/path'
 import NotFound from '../PageNotFound'
 import { useTranslation } from 'react-i18next'
+import { convert } from 'html-to-text'
+import { Helmet } from 'react-helmet-async'
 
 export default function ProductDetail() {
   const { t } = useTranslation('product')
@@ -124,6 +126,17 @@ export default function ProductDetail() {
   if (!product) return null
   return (
     <div className='bg-gray-200 py-6'>
+      <Helmet>
+        <title>{product.name}</title>
+        <meta
+          name='description'
+          title={convert(product.description, {
+            limits: {
+              maxInputLength: 150
+            }
+          })}
+        ></meta>
+      </Helmet>
       <div className='container'>
         <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>

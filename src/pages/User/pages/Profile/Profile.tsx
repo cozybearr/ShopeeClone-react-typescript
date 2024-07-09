@@ -14,6 +14,8 @@ import { setProfileToLs } from 'src/utils/auth'
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
 import InputFile from 'src/components/InputFile'
+import { Helmet } from 'react-helmet-async'
+
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'avatar' | 'phone' | 'date_of_birth'>
 type FormDataError = Omit<FormData, 'date_of_birth'> & {
@@ -105,6 +107,10 @@ export default function Profile() {
   const avatar = watch('avatar')
   return (
     <div className='rounded-sm bg-white px-7 pb-20 shadow'>
+      <Helmet>
+        <title>Tài khoản của tôi</title>
+        <meta name='description' title='Shopee Clone My Account page'></meta>
+      </Helmet>
       <div className='border-b border-b-gray-200 py-6'>
         <h1 className='text-lg font-medium capitalize text-gray-900'>Hồ sơ của tôi</h1>
         <div className='mt-1 text-sm text-gray-700'>Quản lí thông tin hồ sơ bảo mật tài khoản</div>
@@ -181,7 +187,11 @@ export default function Profile() {
         <div className='flex justify-center md:w-72 md:border-l md:border-l-gray-200'>
           <div className='flex flex-col items-center'>
             <div className='my-5 h-24 w-24'>
-              <img className='h-full w-full object-cover' src={previewImage || getAvatarUrl(profile?.avatar as string)} alt=''></img>
+              <img
+                className='h-full w-full object-cover'
+                src={previewImage || getAvatarUrl(profile?.avatar as string)}
+                alt=''
+              ></img>
             </div>
             <InputFile setFile={setFile} />
             <div className='mt-3 text-gray-400'>

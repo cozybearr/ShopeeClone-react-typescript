@@ -13,6 +13,7 @@ import keyBy from 'lodash/keyBy'
 import noproduct from 'src/assets/images/no-product.png'
 import { toast } from 'react-toastify'
 import { AppContext } from 'src/contexts/app.context'
+import { Helmet } from 'react-helmet-async'
 
 export default function Cart() {
   const { extendedPurchase, setExtendedPurchase } = useContext(AppContext)
@@ -145,6 +146,10 @@ export default function Cart() {
 
   return (
     <div className='bg-neutral-100 py-16'>
+      <Helmet>
+        <title>Giỏ hàng</title>
+        <meta name='description' title='Shopee Clone Cart page'></meta>
+      </Helmet>
       <div className='container'>
         {extendedPurchase.length > 0 ? (
           <Fragment>

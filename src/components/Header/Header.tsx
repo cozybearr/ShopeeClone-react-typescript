@@ -12,9 +12,11 @@ import { useQuery } from '@tanstack/react-query'
 import useSearchProducts from 'src/hooks/useSearchProducts'
 
 const MAX_PURCHASE = 5
+
 export default function Header() {
   const { isAuthenticated } = useContext(AppContext)
   const { onSubmitSearch, register } = useSearchProducts()
+  // khi chuyen trang, header chi rerender chu ko unmount => query ko bi inactive => ko bi goi lai => ko can set staleTime la infinite
   const { data: purchasesInCartData } = useQuery({
     queryKey: ['purchases', { status: purchasesStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart }),
