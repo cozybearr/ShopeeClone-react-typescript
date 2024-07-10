@@ -104,7 +104,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             </li>
           ))}
       </ul>
-      <Link to={path.home} className='mt-4 flex items-center font-bold uppercase'>
+      <div className='mt-4 flex items-center font-bold uppercase'>
         <svg enableBackground='new 0 0 15 15' viewBox='0 0 15 15' x={0} y={0} className='mr-3 h-2 w-2 stroke-current'>
           <g>
             <polyline
@@ -117,7 +117,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
           </g>
         </svg>
         {t('aside filter.filters')}
-      </Link>
+      </div>
       <div className='my-4 h-[1px] bg-gray-300'></div>
       <div className='my-5'>
         <form className='mt-2' onSubmit={onSubmit}>
