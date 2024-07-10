@@ -28,11 +28,12 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     control,
     handleSubmit,
     trigger,
+    reset,
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
-      price_min: '',
-      price_max: ''
+      price_min: queryConfig.price_min || '',
+      price_max: queryConfig.price_max || ''
     },
     resolver: yupResolver(priceSchema) as any,
     shouldFocusError: false
@@ -49,6 +50,10 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     })
   })
   const handleDeleteFilter = () => {
+    reset({
+      price_min: '',
+      price_max: ''
+    })
     navigate({
       pathname: path.home,
       search: createSearchParams(
