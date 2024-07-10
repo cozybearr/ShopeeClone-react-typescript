@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import path from 'src/constants/path'
@@ -5,6 +6,10 @@ import path from 'src/constants/path'
 export default function NotFound() {
   return (
     <Fragment>
+      <Helmet>
+        <title>Trang không khả dụng</title>
+        <meta name='description' title='Shopee Clone Not Found page'></meta>
+      </Helmet>
       <main className='grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8'>
         <div className='text-center'>
           <p className='text-base font-semibold text-orange'>404</p>

@@ -18,7 +18,7 @@ export interface Product {
   updatedAt: string
 }
 
-export interface ProductList {
+export interface ProductListType {
   products: Product[]
   pagination: {
     page: number
